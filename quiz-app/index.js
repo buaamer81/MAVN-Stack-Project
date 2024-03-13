@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors'); // Import cors middleware
 const app = express();
+const Quiz = require('./mongdb'); // Import the Quiz model
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -10,59 +11,15 @@ app.use(cors());
 // Define routes
 
 // Route for fetching quiz questions
-app.get('/api/questions', (req, res) => {
+app.get('/api/questions', async (req, res) => {
     // Your logic to fetch quiz questions goes here
-    const questions = [
-        {
-            id: 1,
-            question: "What is the capital of France?",
-            options: ["Paris", "London", "Berlin", "Rome"],
-            answer: "Paris"
-        },
-        {
-            id: 2,
-            question: "Which planet is known as the Red Planet?",
-            options: ["Venus", "Mars", "Jupiter", "Saturn"],
-            answer: "Mars"
-        },
-        {
-            id: 3,
-            question: "What is the chemical symbol for water?",
-            options: ["H2O", "CO2", "NaCl", "O2"],
-            answer: "H2O"
-        },
-        {
-            id: 4,
-            question: "Who wrote 'Romeo and Juliet'?",
-            options: ["William Shakespeare", "Jane Austen", "Charles Dickens", "Leo Tolstoy"],
-            answer: "William Shakespeare"
-        },
-        {
-            id: 5,
-            question: "What is the largest mammal in the world?",
-            options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
-            answer: "Blue Whale"
-        },
-        {
-            id: 6,
-            question: "What is the tallest mountain in the world?",
-            options: ["Mount Kilimanjaro", "Mount Everest", "Mount Fuji", "Denali"],
-            answer: "Mount Everest"
-        },
-        {
-            id: 7,
-            question: "Who painted the Mona Lisa?",
-            options: ["Leonardo da Vinci", "Vincent van Gogh", "Pablo Picasso", "Michelangelo"],
-            answer: "Leonardo da Vinci"
-        },
-        {
-            id: 8,
-            question: "What is the chemical symbol for gold?",
-            options: ["Au", "Ag", "Fe", "Cu"],
-            answer: "Au"
-        }
-    ];
-    res.json({ questions });
+    try {
+        const questions = await Quiz.find();
+        res.json({ questions });
+    } catch (err) {
+        console.error('Error fetching quiz questions', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // Route for submitting quiz answers
